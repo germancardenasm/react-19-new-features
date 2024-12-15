@@ -1,3 +1,4 @@
+"use server";
 import { seedDb } from "@/lib/data";
 import { Todo } from "@/types/todo";
 
@@ -13,7 +14,7 @@ export async function getTodos(): Promise<Todo[]> {
 
 export async function addTodo(text: string): Promise<Todo> {
   await delay(1000);
-  const newTodo: Todo = { id: Date.now(), text, completed: false };
+  const newTodo: Todo = { id: Date.now(), text: text.trim(), completed: false };
   todos.push(newTodo);
   return newTodo;
 }

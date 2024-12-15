@@ -8,25 +8,30 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { addTodo, updateTodo, deleteTodo } from "@/lib/db";
 import { Todo } from "@/types/todo";
 
-export function TodoDashboard({ promisedTodos }: { promisedTodos: Promise<Todo[]> }) {
+export function TodoDashboard({
+  promisedTodos,
+}: {
+  promisedTodos: Promise<Todo[]>;
+}) {
   const fetchedTodos = use(promisedTodos);
   const [todos, setTodos] = useState<Todo[]>(fetchedTodos);
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
-  const [isAdding, setIsAdding] = useState(false);
   const [updatingTodoId, setUpdatingTodoId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleAddTodo = async (text: string) => {
+  const handleAddTodo = async (_: string, formData: FormData) => {
     try {
-      setIsAdding(true);
       setError(null);
-      const newTodo = await addTodo(text);
-      setTodos([...todos, newTodo]);
+      const todo = formData.get("todo") as string;
+      if (todo.trim()) {
+        const newTodo = await addTodo(todo);
+        setTodos([...todos, newTodo]);
+      }
+      return todo;
     } catch (err) {
       setError("Failed to add todo. Please try again.");
       console.error("Error adding todo:", err);
-    } finally {
-      setIsAdding(false);
+      return "";
     }
   };
 
@@ -78,7 +83,7 @@ export function TodoDashboard({ promisedTodos }: { promisedTodos: Promise<Todo[]
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      <TodoForm addTodo={handleAddTodo} isAdding={isAdding} />
+      <TodoForm addTodo={handleAddTodo} />
       <TodoFilter filter={filter} setFilter={setFilter} />
       <TodoList
         todos={filteredTodos}
