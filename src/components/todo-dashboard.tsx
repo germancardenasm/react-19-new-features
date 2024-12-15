@@ -8,7 +8,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { addTodo, updateTodo, deleteTodo } from "@/lib/db";
 import { Todo } from "@/types/todo";
 
-export function TodoDashboard({ fetchedTodos }: { fetchedTodos: Todo[] }) {
+export function TodoDashboard({ promisedTodos }: { promisedTodos: Promise<Todo[]> }) {
+  const fetchedTodos = use(promisedTodos);
   const [todos, setTodos] = useState<Todo[]>(fetchedTodos);
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [isAdding, setIsAdding] = useState(false);
