@@ -5,19 +5,17 @@ import { Input } from '@/components/ui/input'
 
 type TodoFormProps = {
   addTodo: (text: string) => Promise<void>
+  isAdding: boolean
 }
 
-export function TodoForm({ addTodo }: TodoFormProps) {
+export function TodoForm({ addTodo, isAdding }: TodoFormProps) {
   const [text, setText] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (text.trim() && !isSubmitting) {
-      setIsSubmitting(true)
+    if (text.trim() && !isAdding) {
       await addTodo(text.trim())
       setText('')
-      setIsSubmitting(false)
     }
   }
 
@@ -29,10 +27,10 @@ export function TodoForm({ addTodo }: TodoFormProps) {
         onChange={(e) => setText(e.target.value)}
         placeholder="Add a new task"
         className="flex-grow"
-        disabled={isSubmitting}
+        disabled={isAdding}
       />
-      <Button type="submit" disabled={isSubmitting}>
-        <PlusCircle className="mr-2 h-4 w-4" /> {isSubmitting ? 'Adding...' : 'Add'}
+      <Button type="submit" disabled={isAdding}>
+        <PlusCircle className="mr-2 h-4 w-4" /> {isAdding ? 'Adding...' : 'Add'}
       </Button>
     </form>
   )

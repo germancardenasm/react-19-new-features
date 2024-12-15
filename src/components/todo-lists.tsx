@@ -7,9 +7,15 @@ type TodoListProps = {
   todos: Todo[];
   toggleTodo: (id: number) => Promise<void>;
   deleteTodo: (id: number) => Promise<void>;
+  updatingTodoId: number | null;
 };
 
-export function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProps) {
+export function TodoList({
+  todos,
+  toggleTodo,
+  deleteTodo,
+  updatingTodoId,
+}: TodoListProps) {
   if (todos.length === 0) {
     return (
       <p className="text-center text-gray-500 my-4">
@@ -29,6 +35,7 @@ export function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProps) {
             id={`todo-${todo.id}`}
             checked={todo.completed}
             onCheckedChange={() => toggleTodo(todo.id)}
+            disabled={updatingTodoId === todo.id}
           />
           <label
             htmlFor={`todo-${todo.id}`}
@@ -42,9 +49,14 @@ export function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProps) {
             variant="ghost"
             size="icon"
             onClick={() => deleteTodo(todo.id)}
+            disabled={updatingTodoId === todo.id}
             aria-label="Delete todo"
           >
-            <Trash2 className="h-4 w-4" />
+            {updatingTodoId === todo.id ? (
+              <span className="animate-spin">⏳</span>
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
           </Button>
         </li>
       ))}
